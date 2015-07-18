@@ -30,20 +30,19 @@ definition(
 //The number of times repeat notifications can be sent should also be configurable by the user "N"
 
 preferences {
-	section("Which doors & windows would you like to monitor?") {
+    	section("Which doors & windows would you like to monitor?") {
     //multiple: true - so user can select multiple doors and windows to monitor.
-    	input "contact1", "capability.contactSensor", multiple: true, title: "Select doors/windows"
+    		input "contact1", "capability.contactSensor", multiple: true, title: "Select doors/windows"
 	}
-    section("After how many minutes do you want to be notified?") {
-        input(name: "minsUntilNotify", type: "number", title: "Number of minutes")
-    }
-    section("How often do you want to be notified?") {
-    	input(name: "minsRepeatNotify", type: "number", title: "Number of minutes")
-    }
-    section("How many times do you want to be notified?") {
-    	input(name: "numNotify", type: "number", title: "Number of notifications")
-    }
-    
+    	section("After how many minutes do you want to be notified?") {
+        	input(name: "minsUntilNotify", type: "number", title: "Number of minutes")
+    	}
+    	section("How often do you want to be notified?") {
+    		input(name: "minsRepeatNotify", type: "number", title: "Number of minutes")
+    	}
+    	section("How many times do you want to be notified?") {
+    		input(name: "numNotify", type: "number", title: "Number of notifications")
+    	}
 }
 
 def installed() {
@@ -61,18 +60,26 @@ def updated() {
 
 def initialize() {
 	// TODO: subscribe to attributes, devices, locations, etc.
-    subscribe(contact1, "contact.open", delayHandler)
+	subscribe(contact1, "contact.open", delayHandler)
 }
 
 // TODO: implement event handlers
 def delayHandler(evt) {
 	log.debug "$evt.value"
     //runIn(minsUntilNotify -> calls method to repeatedly notify the user 'N' times)
-    runIn(minsUntilNotify*60, handler)
+    	runIn(minsUntilNotify*60, handler)
     
 }
     
 def handler() {
 	sendPush("The ${contact1.displayName} is open!")
+	 state.count = 0;
+	 //while method to ensure that the user is only notified 'N' times
+    	while (state.count++ < numNotify) {
+    		runIn(minsRepeatNotify*60, repeatHandler)
+	}
 }
-    
+
+def repeatHandler() {
+	sendPush("The ${contact1.displayName} is open!")
+}    
