@@ -63,23 +63,28 @@ def initialize() {
 	subscribe(contact1, "contact.open", delayHandler)
 }
 
-// TODO: implement event handlers
 def delayHandler(evt) {
 	log.debug "$evt.value"
-    //runIn(minsUntilNotify -> calls method to repeatedly notify the user 'N' times)
+    	//runIn(minsUntilNotify -> calls method to repetedly notify the user 'N' times)
     	runIn(minsUntilNotify*60, handler)
     
 }
     
 def handler() {
+	log.debug "First push"
+    	log.debug "0 $minsRepeatNotify * * *"
 	sendPush("The ${contact1.displayName} is open!")
-	 state.count = 0;
-	 //while method to ensure that the user is only notified 'N' times
-    	while (state.count++ < numNotify) {
-    		runIn(minsRepeatNotify*60, repeatHandler)
-	}
+//	schedule("0 $minsRepeatNotify * * *", repeatHandler)
 }
 
 def repeatHandler() {
+    log.debug "On schedule"
+    def count = 0
+    def latest = contactSensor.currentState("contact1")
+    if (latest.value == "open" && count < numNotify) {
 	sendPush("The ${contact1.displayName} is open!")
-}    
+        count++
+        latest = contactSensor.currentState("contact1")
+    }
+    
+}
