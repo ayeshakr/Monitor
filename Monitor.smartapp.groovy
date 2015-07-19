@@ -28,7 +28,7 @@ definition(
 //until the door or window is closed. 
 //"X" and "Y" is a parameter that can be configured by the user. 
 //The number of times repeat notifications can be sent should also be configurable by the user "N"
-
+//yum
 preferences {
     	section("Which doors & windows would you like to monitor?") {
     //multiple: true - so user can select multiple doors and windows to monitor.
