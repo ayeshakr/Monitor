@@ -71,20 +71,24 @@ def delayHandler(evt) {
 }
     
 def handler() {
-	log.debug "First push"
-    	log.debug "0 $minsRepeatNotify * * *"
-	sendPush("The ${contact1.displayName} is open!")
-//	schedule("0 $minsRepeatNotify * * *", repeatHandler)
+    log.debug "First push"
+    //log.debug "0 $minsRepeatNotify * * *"
+    //Display the first push
+    sendPush("The ${contact1.displayName} is open!")
+    //now schedule push msgs every 'X' mins as specified by user using cron expressions
+    schedule("0 $minsRepeatNotify * * *", repeatHandler) //why does this crash?
 }
 
 def repeatHandler() {
     log.debug "On schedule"
     def count = 0
     def latest = contactSensor.currentState("contact1")
+    //if the door is still open AND we are under the maximum number of notifications
     if (latest.value == "open" && count < numNotify) {
 	sendPush("The ${contact1.displayName} is open!")
         count++
-        latest = contactSensor.currentState("contact1")
+        }
+    else {
+    	unschedule("repeatHandler")
     }
-    
-}
+}     
