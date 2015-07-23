@@ -76,7 +76,7 @@ def handler() {
     //Display the first push
     sendPush("The ${contact1.displayName} is open!")
     //now schedule push msgs every 'X' mins as specified by user using cron expressions
-    schedule("0 $minsRepeatNotify * * *", repeatHandler) //why does this crash?
+    schedule("0 $minsRepeatNotify * * *", repeatHandler) //why does this crash? WHY??
 }
 
 def repeatHandler() {
